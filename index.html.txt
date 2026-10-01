@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TutorFlow - Ishraq Bin Rahman</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans pb-20 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50 flex justify-between items-center shadow-lg">
+    <div class="flex items-center gap-2">
+      <i class="fa-solid font-bold text-blue-500 text-2xl fa-graduation-cap"></i>
+      <div>
+        <h1 class="text-xl font-bold tracking-wide leading-none">TutorFlow</h1>
+        <p class="text-[10px] text-slate-400 font-medium mt-0.5">Tutor: Ishraq Bin Rahman</p>
+      </div>
+    </div>
+    <div class="text-xs bg-slate-700 px-3 py-1 rounded-full text-slate-300 flex items-center gap-1.5">
+      <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Saved Locally
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-4xl mx-auto p-4 space-y-6">
+
+    <!-- TAB 1: DASHBOARD & SESSIONS -->
+    <section id="tab-dashboard" class="tab-content space-y-6">
+      
+      <!-- Stats Quick Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+          <p class="text-xs text-slate-400 font-medium">Total Students</p>
+          <p id="stat-students" class="text-2xl font-bold mt-1 text-blue-400">0</p>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+          <p class="text-xs text-slate-400 font-medium">Earned This Month</p>
+          <p id="stat-earnings" class="text-2xl font-bold mt-1 text-emerald-400">৳0</p>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 col-span-2 md:col-span-1">
+          <p class="text-xs text-slate-400 font-medium">Pending Tasks</p>
+          <p id="stat-tasks" class="text-2xl font-bold mt-1 text-amber-400">0</p>
+        </div>
+      </div>
+
+      <!-- Add Session Log Form -->
+      <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-sm space-y-4">
+        <h2 class="text-lg font-semibold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-plus-circle text-blue-400"></i> Log Completed Class
+        </h2>
+        <form id="form-session" class="space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Select Student</label>
+              <select id="session-student" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-blue-500 focus:outline-none">
+                <option value="">Choose Student...</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Date</label>
+              <input type="date" id="session-date" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-blue-500 focus:outline-none">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Duration (Hours)</label>
+              <input type="number" step="0.5" id="session-duration" value="1.5" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Fee Earned (৳)</label>
+              <input type="number" id="session-fee" placeholder="500" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-blue-500 focus:outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Topic Covered</label>
+            <input type="text" id="session-topic" placeholder="e.g. Higher Math Ch 4 Differentiation" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-blue-500 focus:outline-none">
+          </div>
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg text-sm transition">Save Session</button>
+        </form>
+      </div>
+
+      <!-- Recent Logged Sessions -->
+      <div class="space-y-3">
+        <h3 class="text-md font-semibold text-slate-300">Recent Sessions</h3>
+        <div id="list-sessions" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- TAB 2: STUDENTS -->
+    <section id="tab-students" class="tab-content hidden space-y-6">
+      <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-sm space-y-4">
+        <h2 class="text-lg font-semibold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-emerald-400"></i> Add New Student
+        </h2>
+        <form id="form-student" class="space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input type="text" id="student-name" placeholder="Student Name" required class="bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-emerald-500 focus:outline-none">
+            <input type="text" id="student-subject" placeholder="Subject / Class" required class="bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-emerald-500 focus:outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <input type="text" id="student-phone" placeholder="Phone Number" class="bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-emerald-500 focus:outline-none">
+            <input type="number" id="student-rate" placeholder="Rate / Session" required class="bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-emerald-500 focus:outline-none">
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg text-sm transition">Add Student</button>
+        </form>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="text-md font-semibold text-slate-300">Active Students</h3>
+        <div id="list-students" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: TO-DO LIST -->
+    <section id="tab-tasks" class="tab-content hidden space-y-6">
+      <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-sm space-y-4">
+        <h2 class="text-lg font-semibold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-amber-400"></i> Add Task
+        </h2>
+        <form id="form-task" class="flex gap-2">
+          <input type="text" id="task-title" placeholder="e.g. Prepare lecture notes for Physics" required class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-500 focus:outline-none">
+          <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-4 rounded-lg text-sm transition">Add</button>
+        </form>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="text-md font-semibold text-slate-300">To-Do Items</h3>
+        <div id="list-tasks" class="space-y-2"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around p-3 z-50">
+    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center gap-1 text-blue-400 text-xs font-medium">
+      <i class="fa-solid fa-house text-lg"></i> Dashboard
+    </button>
+    <button onclick="switchTab('students')" id="nav-students" class="flex flex-col items-center gap-1 text-slate-400 text-xs font-medium">
+      <i class="fa-solid fa-users text-lg"></i> Students
+    </button>
+    <button onclick="switchTab('tasks')" id="nav-tasks" class="flex flex-col items-center gap-1 text-slate-400 text-xs font-medium">
+      <i class="fa-solid fa-check-double text-lg"></i> Tasks
+    </button>
+  </nav>
+
+  <script>
+    // LocalStorage Data Management
+    let students = JSON.parse(localStorage.getItem('tf_students')) || [];
+    let sessions = JSON.parse(localStorage.getItem('tf_sessions')) || [];
+    let tasks = JSON.parse(localStorage.getItem('tf_tasks')) || [];
+
+    document.getElementById('session-date').valueAsDate = new Date();
+
+    function saveData() {
+      localStorage.setItem('tf_students', JSON.stringify(students));
+      localStorage.setItem('tf_sessions', JSON.stringify(sessions));
+      localStorage.setItem('tf_tasks', JSON.stringify(tasks));
+      renderAll();
+    }
+
+    function renderAll() {
+      renderStudents();
+      renderSessions();
+      renderTasks();
+      updateStats();
+      updateStudentDropdown();
+    }
+
+    function updateStats() {
+      document.getElementById('stat-students').innerText = students.length;
+      const totalEarned = sessions.reduce((acc, curr) => acc + (Number(curr.fee) || 0), 0);
+      document.getElementById('stat-earnings').innerText = `৳${totalEarned.toLocaleString()}`;
+      const pendingTasks = tasks.filter(t => !t.completed).length;
+      document.getElementById('stat-tasks').innerText = pendingTasks;
+    }
+
+    function updateStudentDropdown() {
+      const select = document.getElementById('session-student');
+      select.innerHTML = '<option value="">Choose Student...</option>' + 
+        students.map(s => `<option value="${s.id}">${s.name} (${s.subject})</option>`).join('');
+    }
+
+    document.getElementById('session-student').addEventListener('change', (e) => {
+      const selected = students.find(s => s.id === e.target.value);
+      if (selected) {
+        document.getElementById('session-fee').value = selected.rate;
+      }
+    });
+
+    // Form Event Listeners
+    document.getElementById('form-student').addEventListener('submit', (e) => {
+      e.preventDefault();
+      students.push({
+        id: Date.now().toString(),
+        name: document.getElementById('student-name').value,
+        subject: document.getElementById('student-subject').value,
+        phone: document.getElementById('student-phone').value,
+        rate: document.getElementById('student-rate').value
+      });
+      e.target.reset();
+      saveData();
+    });
+
+    document.getElementById('form-session').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const studentId = document.getElementById('session-student').value;
+      const student = students.find(s => s.id === studentId);
+      sessions.unshift({
+        id: Date.now().toString(),
+        studentName: student ? student.name : 'Unknown',
+        date: document.getElementById('session-date').value,
+        duration: document.getElementById('session-duration').value,
+        fee: document.getElementById('session-fee').value,
+        topic: document.getElementById('session-topic').value
+      });
+      e.target.reset();
+      document.getElementById('session-date').valueAsDate = new Date();
+      saveData();
+    });
+
+    document.getElementById('form-task').addEventListener('submit', (e) => {
+      e.preventDefault();
+      tasks.unshift({
+        id: Date.now().toString(),
+        title: document.getElementById('task-title').value,
+        completed: false
+      });
+      e.target.reset();
+      saveData();
+    });
+
+    // Render Functions
+    function renderStudents() {
+      const container = document.getElementById('list-students');
+      if (!students.length) {
+        container.innerHTML = `<p class="text-sm text-slate-500 italic">No students added yet.</p>`;
+        return;
+      }
+      container.innerHTML = students.map(s => `
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+          <div>
+            <h4 class="font-bold text-slate-100">${s.name}</h4>
+            <p class="text-xs text-blue-400">${s.subject}</p>
+            <p class="text-xs text-slate-400 mt-1">৳${s.rate} / class • ${s.phone || 'No phone'}</p>
+          </div>
+          <button onclick="deleteItem('students', '${s.id}')" class="text-slate-500 hover:text-red-400 p-2"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function renderSessions() {
+      const container = document.getElementById('list-sessions');
+      if (!sessions.length) {
+        container.innerHTML = `<p class="text-sm text-slate-500 italic">No class sessions recorded yet.</p>`;
+        return;
+      }
+      container.innerHTML = sessions.map(s => `
+        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 flex justify-between items-center">
+          <div class="space-y-0.5">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-slate-200 text-sm">${s.studentName}</span>
+              <span class="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">${s.date}</span>
+            </div>
+            <p class="text-xs text-slate-400">${s.topic || 'No topic specified'} (${s.duration} hrs)</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-bold text-emerald-400">+৳${s.fee}</span>
+            <button onclick="deleteItem('sessions', '${s.id}')" class="text-slate-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('list-tasks');
+      if (!tasks.length) {
+        container.innerHTML = `<p class="text-sm text-slate-500 italic">No tasks added yet.</p>`;
+        return;
+      }
+      container.innerHTML = tasks.map(t => `
+        <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTask('${t.id}')" class="w-4 h-4 accent-amber-500 rounded">
+            <span class="text-sm ${t.completed ? 'line-through text-slate-500' : 'text-slate-200'}">${t.title}</span>
+          </div>
+          <button onclick="deleteItem('tasks', '${t.id}')" class="text-slate-500 hover:text-red-400"><i class="fa-solid fa-trash text-xs"></i></button>
+        </div>
+      `).join('');
+    }
+
+    window.deleteItem = (type, id) => {
+      if (type === 'students') students = students.filter(item => item.id !== id);
+      if (type === 'sessions') sessions = sessions.filter(item => item.id !== id);
+      if (type === 'tasks') tasks = tasks.filter(item => item.id !== id);
+      saveData();
+    };
+
+    window.toggleTask = (id) => {
+      const task = tasks.find(t => t.id === id);
+      if (task) task.completed = !task.completed;
+      saveData();
+    };
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+      ['dashboard', 'students', 'tasks'].forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        btn.className = (t === tabName) 
+          ? "flex flex-col items-center gap-1 text-blue-400 text-xs font-medium"
+          : "flex flex-col items-center gap-1 text-slate-400 text-xs font-medium";
+      });
+    }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW reg failed: ', err));
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
